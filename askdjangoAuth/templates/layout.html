@@ -2,9 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>AskDjango Blog</title>
 </head>
 <body>
+    <h1>AskDjango Blog</h1>
 
+    {% if user.is_authenticated %}
+        {{ user }}
+        로그아웃
+    {% else %}
+        회원가입
+        <a href="{% url "login" %}">로그인</a>
+    {% endif %}
+    <hr/>
+
+    {% block content %}
+    {% endblock %}
+
+    <hr/>
+    &copy; 2018. AskDjango
 </body>
 </html>
