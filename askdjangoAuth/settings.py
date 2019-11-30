@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
 TIME_ZONE = 'UTC'
 
@@ -128,3 +128,5 @@ from django.urls import reverse_lazy
 LOGIN_URL = reverse_lazy('login')
 #LOGIN_REDIRECT_URL = reverse_lazy('profile')
 #LOGOUT_REDIRECT_URL = reverse_lazy('login')
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
