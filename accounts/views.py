@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.views import PasswordResetView, PasswordChangeView
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordChangeView
 from django.http import Http404
 from django.urls import reverse_lazy
 from django.utils.http import urlsafe_base64_decode
@@ -78,6 +78,24 @@ class MyPasswordChangeView(PasswordChangeView):
 
     def form_valid(self, form):
         messages.info(self.request, '암호 변경을 완료했습니다.')
+        return super().form_valid(form)
+
+
+class MyPasswordResetView(PasswordResetView):
+    success_url = reverse_lazy('login')
+    template_name = 'accounts/password_reset_form.html'
+
+    def form_valid(self, form):
+        messages.info(self.request, '암호 변경 메일을 발송했습니다.')
+        return super().form_valid(form)
+
+
+class MyPasswordResetConfirmView(PasswordResetConfirmView):
+    success_url = reverse_lazy('login')
+    template_name = 'accounts/password_reset_confirm.html'
+
+    def form_valid(self, form):
+        messages.info(self.request, '암호 리셋을 완료했습니다.')
         return super().form_valid(form)
 
 
