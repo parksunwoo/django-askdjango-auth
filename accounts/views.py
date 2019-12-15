@@ -5,15 +5,16 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordChangeView
 from django.http import Http404
 from django.urls import reverse_lazy
 from django.utils.http import urlsafe_base64_decode
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from django.shortcuts import redirect, render, resolve_url
-from .forms import SignupForm
-
+from .forms import SignupForm, ProfileForm
+from .models import Profile
 
 def signup(request):
     if request.method == 'POST':
@@ -44,11 +45,20 @@ class SignupView(CreateView):
 
 signup = SignupView.as_view()
 
-
-
 @login_required()
 def profile(request):
     return render(request, 'accounts/profile.html')
+
+class ProfileUpdateView(UpdateView, LoginRequiredMixin):
+    model = Profile
+    form_class = ProfileForm
+    success_url = reverse_lazy('profile')
+
+    def get_object(self):
+        return self.request.profile
+
+profile_edit = ProfileUpdateView.as_view()
+
 
 class RequestLoginViaUrlView(PasswordResetView):
     template_name = 'accounts/request_login_via_url_form.html'
