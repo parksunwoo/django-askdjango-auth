@@ -5,7 +5,6 @@ from django.contrib.auth.signals import user_logged_in
 from django.db import models
 from django.db.models.signals import post_save
 from django.core.mail import send_mail
-from importlib import import_module
 
 class UserManager(AuthUserManager):
     def create_superuser(self, username, email, password, **extra_fields):
@@ -49,22 +48,10 @@ class UserSession(models.Model):
     session_key = models.CharField(max_length=40, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+def on_user_logged_in(sender, request, user, **kwargs):
+    user.is_user_logged_in = True
 
-def kicked_my_other_sessions(sender, request, user, **kwargs):
-    print("kicked_my_other_sessions")
-
-    for user_session in UserSession.objects.filter(user=user):
-        session_key = user_session.session_key
-        session = SessionStore(session_key)
-        # session.delete()
-        session['kicked'] = True
-        session.save()
-        user_session.delete()
-
-    session_key = request.session.session_key
-    UserSession.objects.create(user=user, session_key=session_key)
-    user_logged_in.connect(kicked_my_other_sessions)
+user_logged_in.connect(on_user_logged_in)
 
 
 
